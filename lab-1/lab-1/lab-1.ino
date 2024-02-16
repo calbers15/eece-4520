@@ -38,45 +38,44 @@ void setup() {
 
   
 
-  while(digitalRead(Button) == LOW)
+  while(digitalRead(Button) == HIGH)
   {
     digitalWrite(RED, HIGH);
-    timer(1);
-    if(digitalRead(Button)==HIGH){break;}
+    delay(1000);
+    if(digitalRead(Button)==LOW){break;}
     digitalWrite(RED, LOW);
-    timer(1);
+    delay(1000);
   }
 }
 
+
+unsigned long previousMillis = 0;
+unsigned long interval = 1000;
 void loop() {
   
+
+  unsigned long currentMillis = millis();
   // put your main code here, to run repeatedly:
 
   //some for loop for GLA to be solid for 3 seconds
   //some for loop for flahsing GLA for 3 seconds (on 1 sec-off 1 sec(aka 1-1))
   //some function to buzz the buzzer
-  digitalWrite(GLA, HIGH);
-  timer(2);  
-  FlashingSignal(GLA);
+  controlSignal(GLA, 3000);
   
   //some code to make green light stay solid for 9 seconds
-  digitalWrite(GREEN, HIGH);
-  timer(9);
-  FlashingSignal(GREEN);
+  controlSignal(GREEN, 12000);
   //some code to make green light flash 1-1 for 3 seconds
   //some function to buzz the buzzer
-  digitalWrite(YELLOW, HIGH);
+  controlSignal(YELLOW, 15000);
   //some code to make yellow light solid for 3 seconds
   //some function to buzz the buzzer
-  timer(3);
-  FlashingSignal(YELLOW);
+  controlSignal(RED, 32000);
   
   //some code to make red light be for 17 sec
-  digitalWrite(RED, HIGH);
-  timer(17);
+  
   //some code to make red light flash 1-1 for 3 sec
   //some function to buzz the buzzer
-  FlashingSignal(RED);
+  
 
     
 }
@@ -93,19 +92,22 @@ ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
 }
 
 
-void timer(int n){
-  for(int i =0; i < n;){
-   if(toggle1==1){i++;}
+void controlSignal(int pin, unsigned long duration){
+  digitalWrite(pin, HIGH);
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= duration){
+    previousMillis = currentMillis;
+    FlashingSignal(pin);
   }
 }
 
 void FlashingSignal(int pin){
   analogWrite(BUZZER, 256/4);
   digitalWrite(pin, LOW);
-  timer(1);
+  delay(1000);
   digitalWrite(pin, HIGH);
-  timer(1);
+  delay(1000);
   digitalWrite(pin, LOW);
-  timer(1);
+  delay(1000);
   analogWrite(BUZZER, 0);
 }
