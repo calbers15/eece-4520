@@ -5,6 +5,7 @@
 #define BUZZER 2
 #define Button 52
 #define GREEN_LEFT_ARROW 51
+int toggle1;
 
 void setup() {
   // put your setup code here, to run once:
@@ -52,10 +53,19 @@ void loop() {
   
   
   //some for loop for GLA to be solid for 3 seconds
+  digitalWrite(GLA, HIGH);
+  timer(3);
+  digitalWrite(GLA, LOW);
   
   //some for loop for flahsing GLA for 3 seconds (on 1 sec-off 1 sec(aka 1-1))
   //some function to buzz the buzzer
-
+  for(int i = 0;i<3;i++){
+  digitalWrite(GLA, HIGH);
+  timer(1);
+  digitalWrite(GLA, LOW);
+  timer(1);
+  }
+  
   //some code to make green light stay solid for 9 seconds
 
   //some code to make green light flash 1-1 for 3 seconds
@@ -70,28 +80,19 @@ void loop() {
 }
 
 ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
-//generates pulse wave of frequency 1Hz/2 = 0.5kHz (takes two cycles for full wave- toggle high then toggle low)
+//generates pulse wave of frequency 1Hz/2 = 0.5kHz (takes two cycles for full wave- toggle high then toggle low) 
+    
   if (toggle1){
-    digitalWrite(13,HIGH);
     toggle1 = 0;
   }
   else{
-    digitalWrite(13,LOW);
     toggle1 = 1;
   }
 }
 
-void RedFlashing(){
-  digitalWrite(RED,HIGH);
-  //wait
-  digitalWrite(RED,LOW);
-  //wait
-  return;
-}
 
-void GLAFlashing(){
-  digitalWrite(GREEN_LEFT_ARROW, HIGH);
-  //wait
-  digitalWrite(GREEN_LEFT_ARROW, LOW);
-  //wait
+void timer(int n){
+  for(int i =0; i < n;){
+   if(toggle1==1){i++;}
+  }
 }
