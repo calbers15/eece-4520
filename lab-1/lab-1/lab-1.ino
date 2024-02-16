@@ -2,10 +2,10 @@
 #define GREEN 55 //assigning pins specific values without using globals
 #define YELLOW 54
 #define RED 53
-#define BUZZER 2
+#define BUZZER 2 // change to a pin labeled as analog or pwm
 #define Button 52
-#define GREEN_LEFT_ARROW 51
-int toggle1;
+#define GLA 51
+short int toggle1;
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,7 +16,7 @@ void setup() {
   pinMode(RED, OUTPUT);
   pinMode(BUZZER, OUTPUT);
   pinMode(Button, INPUT);
-  pinMode(GREEN_LEFT_ARROW, OUTPUT);
+  pinMode(GLA, OUTPUT);
 
   cli();//stop interrupts
 
@@ -39,7 +39,10 @@ void setup() {
 
   while(digitalRead(Button) == LOW)
   {
-    RedFlashing();
+    digitalWrite(RED, HIGH);
+    timer(1);
+    digitalWrite(RED, LOW);
+    timer(1);
   }
 }
 
@@ -47,36 +50,33 @@ void loop() {
   
   // put your main code here, to run repeatedly:
 
-  //some code to make red light flash 1-1 for 3 sec
-  GLAFlashing();
-  //some function to buzz the buzzer
-  
-  
   //some for loop for GLA to be solid for 3 seconds
-  digitalWrite(GLA, HIGH);
-  timer(3);
-  digitalWrite(GLA, LOW);
-  
   //some for loop for flahsing GLA for 3 seconds (on 1 sec-off 1 sec(aka 1-1))
   //some function to buzz the buzzer
-  for(int i = 0;i<3;i++){
   digitalWrite(GLA, HIGH);
-  timer(1);
-  digitalWrite(GLA, LOW);
-  timer(1);
-  }
+  timer(2);  
+  FlashingSignal(GLA);
   
   //some code to make green light stay solid for 9 seconds
-
+  digitalWrite(GREEN, HIGH);
+  timer(9);
+  FlashingSignal(GREEN);
   //some code to make green light flash 1-1 for 3 seconds
   //some function to buzz the buzzer
-  
+  digitalWrite(YELLOW, HIGH);
   //some code to make yellow light solid for 3 seconds
   //some function to buzz the buzzer
-
-  //some code to make red light be for 17 sec
-
+  timer(3);
+  FlashingSignal(YELLOW);
   
+  //some code to make red light be for 17 sec
+  digitalWrite(RED, HIGH);
+  timer(17);
+  //some code to make red light flash 1-1 for 3 sec
+  //some function to buzz the buzzer
+  FlashingSignal(RED);
+
+    
 }
 
 ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
@@ -95,4 +95,15 @@ void timer(int n){
   for(int i =0; i < n;){
    if(toggle1==1){i++;}
   }
+}
+
+void FlashingSignal(int pin){
+  analogWrite(BUZZER, 256/4);
+  digitalWrite(pin, LOW);
+  timer(1);
+  digitalWrite(pin, HIGH);
+  timer(1);
+  digitalWrite(pin, LOW);
+  timer(1);
+  analogWrite(BUZZER, 0);
 }
