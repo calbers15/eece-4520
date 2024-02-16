@@ -36,13 +36,14 @@ void setup() {
 
   sei();//allow interrupts
 
-  
+  digitalWrite(RED, LOW);digitalWrite(YELLOW, LOW);digitalWrite(GREEN, LOW);digitalWrite(GLA, LOW);
 
   while(digitalRead(Button) == HIGH)
   {
     digitalWrite(RED, HIGH);
     delay(1000);
-    if(digitalRead(Button)==LOW){break;}
+    if(digitalRead(Button)==LOW)
+      {digitalWrite(RED, LOW); break;}
     digitalWrite(RED, LOW);
     delay(1000);
   }
@@ -56,20 +57,28 @@ void loop() {
 
   unsigned long currentMillis = millis();
   // put your main code here, to run repeatedly:
+  digitalWrite(GLA, LOW);
+  digitalWrite(GREEN, LOW);
+  digitalWrite(YELLOW, LOW);
+  digitalWrite(RED, LOW);
 
   //some for loop for GLA to be solid for 3 seconds
   //some for loop for flahsing GLA for 3 seconds (on 1 sec-off 1 sec(aka 1-1))
   //some function to buzz the buzzer
   controlSignal(GLA, 3000);
+  digitalWrite(GLA, LOW);
   
   //some code to make green light stay solid for 9 seconds
   controlSignal(GREEN, 12000);
+  digitalWrite(GREEN, LOW);
   //some code to make green light flash 1-1 for 3 seconds
   //some function to buzz the buzzer
   controlSignal(YELLOW, 15000);
+  digitalWrite(YELLOW, LOW);
   //some code to make yellow light solid for 3 seconds
   //some function to buzz the buzzer
   controlSignal(RED, 32000);
+  digitalWrite(RED, LOW);
   
   //some code to make red light be for 17 sec
   
@@ -93,12 +102,18 @@ ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
 
 
 void controlSignal(int pin, unsigned long duration){
-  digitalWrite(pin, HIGH);
+  
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= duration){
-    previousMillis = currentMillis;
-    FlashingSignal(pin);
-  }
+  
+  digitalWrite(pin, LOW);
+
+  do{
+    digitalWrite(pin, HIGH);
+    currentMillis = millis();
+  }while(currentMillis < duration);
+
+  currentMillis = 0;
+
 }
 
 void FlashingSignal(int pin){
