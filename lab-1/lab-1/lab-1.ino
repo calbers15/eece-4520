@@ -1,11 +1,12 @@
 //#include "TimerSample.ino"
-#define GREEN 55 //assigning pins specific values without using globals
-#define YELLOW 54
-#define RED 53
+#define GREEN 53 //assigning pins specific values without using globals
+#define YELLOW 52
+#define RED 51
+#define GLA 50
 #define BUZZER 2 // change to a pin labeled as analog or pwm
-#define Button 52
-#define GLA 51
-short int toggle1;
+#define Button 49
+
+char toggle1;
 
 void setup() {
   // put your setup code here, to run once:
@@ -41,6 +42,7 @@ void setup() {
   {
     digitalWrite(RED, HIGH);
     timer(1);
+    if(digitalRead(Button)==HIGH){break;}
     digitalWrite(RED, LOW);
     timer(1);
   }
