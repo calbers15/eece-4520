@@ -1,22 +1,38 @@
 //#include "TimerSample.ino"
+<<<<<<< Updated upstream
 #define GREEN 55 //assigning pins specific values without using globals
 #define YELLOW 54
 #define RED 53
 #define BUZZER 2
 #define Button 52
 #define GREEN_LEFT_ARROW 51
+=======
+#define GREEN 53 //assigning pins specific values without using globals
+#define YELLOW 52
+#define RED 51
+#define GLA 50
+#define BUZZER 2 // change to a pin labeled as analog or pwm
+#define Button 3
+
+int toggle1;
+int loopTime;
+>>>>>>> Stashed changes
 
 void setup() {
   // put your setup code here, to run once:
-
   
   pinMode(GREEN, OUTPUT);
   pinMode(YELLOW, OUTPUT);
   pinMode(RED, OUTPUT);
   pinMode(BUZZER, OUTPUT);
   pinMode(Button, INPUT);
+<<<<<<< Updated upstream
   pinMode(GREEN_LEFT_ARROW, OUTPUT);
 
+=======
+  pinMode(GLA, OUTPUT);
+  
+>>>>>>> Stashed changes
   cli();//stop interrupts
 
   //set timer1 interrupt at 1Hz
@@ -31,21 +47,30 @@ void setup() {
   TCCR1B |= (1 << CS12) | (1 << CS10);  
   // enable timer compare interrupt
   TIMSK1 |= (1 << OCIE1A);
-
+  
+  attachInterrupt(digitalPinToInterrupt(Button), initiateLoop, FALLING);//go to void loop() when button falling
   sei();//allow interrupts
 
-  
-
-  while(digitalRead(Button) == LOW)
+  while(1)
   {
+<<<<<<< Updated upstream
     RedFlashing();
+=======
+    if(toggle1 == 0){    digitalWrite(RED, HIGH);}
+    if(toggle1 == 1){    digitalWrite(RED, LOW); }
+>>>>>>> Stashed changes
   }
+  initiateLoop();
 }
 
+
+
+
 void loop() {
-  
+  loopTime = 0;
   // put your main code here, to run repeatedly:
 
+<<<<<<< Updated upstream
   //some code to make red light flash 1-1 for 3 sec
   GLAFlashing();
   //some function to buzz the buzzer
@@ -67,10 +92,33 @@ void loop() {
   //some code to make red light be for 17 sec
 
   
+=======
+  Lights(2, GLA);//5 seconds total
+  
+  Lights(5+9, GREEN);//12 seconds total
+  
+  digitalWrite(YELLOW, HIGH); //3 seconds total
+  analogWrite(BUZZER, 256/4);
+  do{}while(loopTime < 5+12+3);  
+  digitalWrite(YELLOW, LOW);
+  analogWrite(BUZZER,0);
+    
+
+  Lights(5+12+3+17,RED);//20 seconds total
+>>>>>>> Stashed changes
 }
 
+
+
+
+
 ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
+<<<<<<< Updated upstream
 //generates pulse wave of frequency 1Hz/2 = 0.5kHz (takes two cycles for full wave- toggle high then toggle low)
+=======
+//generates pulse wave of frequency 1Hz/2 = 0.5kHz (takes two cycles for full wave- toggle high then toggle low) 
+  loopTime++;
+>>>>>>> Stashed changes
   if (toggle1){
     digitalWrite(13,HIGH);
     toggle1 = 0;
@@ -81,6 +129,7 @@ ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
   }
 }
 
+<<<<<<< Updated upstream
 void RedFlashing(){
   digitalWrite(RED,HIGH);
   //wait
@@ -94,4 +143,25 @@ void GLAFlashing(){
   //wait
   digitalWrite(GREEN_LEFT_ARROW, LOW);
   //wait
+=======
+
+void initiateLoop()
+{
+    detachInterrupt(digitalPinToInterrupt(Button));
+}
+
+
+void Lights(int solidTime, int pin)
+{
+  digitalWrite(pin, HIGH);
+  do{}while(loopTime < solidTime);  
+  analogWrite(BUZZER, 256/4); //some function to buzz the buzzer
+  do
+  {
+    if(toggle1 == 1){digitalWrite(pin, LOW);}  //some code to make light flash 1-1 for 3 seconds
+    if(toggle1 == 0){digitalWrite(pin, HIGH);}
+  }while(loopTime < solidTime+3);
+  analogWrite(BUZZER, 0);
+  digitalWrite(pin, LOW);
+>>>>>>> Stashed changes
 }
