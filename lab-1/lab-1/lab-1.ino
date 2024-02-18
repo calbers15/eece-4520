@@ -50,7 +50,6 @@ void setup() {
 
 void loop() {
   loopTime = 0;
-  // put your main code here, to run repeatedly:
 
   Lights(2, GLA);//5 seconds total
   
