@@ -6,8 +6,10 @@
 #define BUZZER 2 // change to a pin labeled as analog or pwm
 #define Button 3
 
+volatile bool flag = true;
+
 int toggle1;
-int loopTime;
+int loopTime=0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,7 +18,7 @@ void setup() {
   pinMode(YELLOW, OUTPUT);
   pinMode(RED, OUTPUT);
   pinMode(BUZZER, OUTPUT);
-  pinMode(Button, INPUT);
+  pinMode(Button, INPUT_PULLUP);
   pinMode(GLA, OUTPUT);
   
   cli();//stop interrupts
@@ -33,16 +35,18 @@ void setup() {
   TCCR1B |= (1 << CS12) | (1 << CS10);  
   // enable timer compare interrupt
   TIMSK1 |= (1 << OCIE1A);
-  
-  attachInterrupt(digitalPinToInterrupt(Button), initiateLoop, FALLING);//go to void loop() when button falling
-  sei();//allow interrupts
+  attachInterrupt(digitalPinToInterrupt(Button), initateLoop, LOW);//go to void loop() when button falling
 
-  while(1)
+  sei();//allow interrupts
+  
+
+  while(flag)
   {
     if(toggle1 == 0){    digitalWrite(RED, HIGH);}
     if(toggle1 == 1){    digitalWrite(RED, LOW); }
   }
-  initiateLoop();
+  detachInterrupt(digitalPinToInterrupt(Button));
+
 }
 
 
@@ -77,23 +81,25 @@ ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
   }
 }
 
-
-void initiateLoop()
+void initateLoop()
 {
-    detachInterrupt(digitalPinToInterrupt(Button));
+  flag = false;
+  digitalWrite(RED, LOW);
 }
-
 
 void Lights(int solidTime, int pin)
 {
   digitalWrite(pin, HIGH);
-  do{}while(loopTime < solidTime);  
+  do
+  {  }while(loopTime < solidTime);
+
   analogWrite(BUZZER, 256/4); //some function to buzz the buzzer
   do
   {
     if(toggle1 == 1){digitalWrite(pin, LOW);}  //some code to make light flash 1-1 for 3 seconds
     if(toggle1 == 0){digitalWrite(pin, HIGH);}
   }while(loopTime < solidTime+3);
+
   analogWrite(BUZZER, 0);
   digitalWrite(pin, LOW);
 }
