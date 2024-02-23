@@ -54,19 +54,19 @@ void setup() {
 
 
 void loop() {
-  loopTime = 0;
+  //loopTime = 0;
 
-  Lights(2, GLA);//5 seconds total
+  Lights(5-3, GLA);//5 seconds total
   
-  Lights(5+9, GREEN);//12 seconds total
+  Lights(12-3, GREEN);//12 seconds total
   
-  digitalWrite(YELLOW, HIGH); //3 seconds total
+  loopTime = 0;
   analogWrite(BUZZER, 256/4);
-  do{}while(loopTime < 5+12+3);  
+  do{digitalWrite(YELLOW, HIGH);}while(loopTime < 3);  
   digitalWrite(YELLOW, LOW);
   analogWrite(BUZZER,0);
     
-  Lights(5+12+3+17,RED);//20 seconds total
+  Lights(20-3,RED);//20 seconds total
 }
 
 
@@ -90,16 +90,16 @@ void initateLoop()
 
 void Lights(int solidTime, int pin)
 {
-  digitalWrite(pin, HIGH);
-  do
-  {  }while(loopTime < solidTime);
+  loopTime = 0;
+  //digitalWrite(pin, HIGH);
+  do{  digitalWrite(pin, HIGH);}while(loopTime < solidTime);
 
+  loopTime = 0;
   analogWrite(BUZZER, 256/4); //some function to buzz the buzzer
-  do
-  {
+  do{
     if(toggle1 == 1){digitalWrite(pin, LOW);}  //some code to make light flash 1-1 for 3 seconds
     if(toggle1 == 0){digitalWrite(pin, HIGH);}
-  }while(loopTime < solidTime+3);
+  }while(loopTime < 3);
 
   analogWrite(BUZZER, 0);
   digitalWrite(pin, LOW);
