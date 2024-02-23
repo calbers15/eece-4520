@@ -7,9 +7,10 @@
 #define Button 3
 
 volatile bool flag = true;
+int volatile loopTime=0;
 
 int toggle1;
-int volatile loopTime=0;
+
 
 void setup() {
   // put your setup code here, to run once:
