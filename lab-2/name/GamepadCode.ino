@@ -27,8 +27,6 @@ int incomingByte = 0;
 
 // the setup routine runs once when you press reset:
 void setup() {
-  delay(1000);
-  
   pinMode(SW_pin, INPUT);
   digitalWrite(SW_pin, HIGH);
   // initialize serial communication at 9600 bits per second:
@@ -48,23 +46,23 @@ void loop() {
     Serial.println(incomingByte);}
   else{ //IF SERIAL IS OPEN, WRITE INTO IT WITH INPUTS
     //X outputs
-    Serial.print("\nX"); 
+    //Serial.print("\nX"); 
   
-    if(analogRead(X_pin_Joystick) < X_mid_left) { Serial.println("A"); }//left
-    if(analogRead(X_pin_Joystick) > X_mid_right) { Serial.println("D"); }//right
-    else{ Serial.println("0"); }
+    if(analogRead(X_pin_Joystick) < X_mid_left) { Serial.print("A"); }//left
+    if(analogRead(X_pin_Joystick) > X_mid_right) { Serial.print("D"); }//right
+    else{ Serial.println("X"); }
     //Y outputs
-    Serial.print("\nY"); 
+    //Serial.print("\nY"); 
    // Serial.print(analogRead(Y_pin_Joystick));
-    if(analogRead(Y_pin_Joystick) < Y_mid_down) { Serial.println("S"); }//down
-    if(analogRead(Y_pin_Joystick) > Y_mid_up) { Serial.println("W"); }//up
-    else{ Serial.println("0"); }    
+    if(analogRead(Y_pin_Joystick) < Y_mid_down) { Serial.print("S"); }//down
+    if(analogRead(Y_pin_Joystick) > Y_mid_up) { Serial.print("W"); }//up
+    else{ Serial.println("Y"); }    
     
   }
     if(incomingByte == 'E') {
       // flip LED
-      led_status = (led_status == HIGH)? LOW : HIGH;
-      digitalWrite(LED_BUILTIN, led_status);
+      digitalWrite(Buzzer), HIGH);
+      delay(250);
     }
 
 }
