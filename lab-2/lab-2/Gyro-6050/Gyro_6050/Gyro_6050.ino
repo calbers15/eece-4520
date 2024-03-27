@@ -3,11 +3,9 @@
 #define buzzer_pin 12
 const int MPU_addr = 0x68;  // I2C address of the MPU-6050
 int16_t GyX, GyY, GyZ;
-int snakeX = 0; // Initial position of the snake
-int snakeY = 0;
-int directionX = 1; // Initial direction of the snake
+int directionX = 0; // Initial direction of the snake
 int directionY = 0;
-unsigned long lastMoveTime = 0; // To control snake movement speed
+
 
 void setup() {
   Wire.begin();
@@ -20,12 +18,8 @@ void setup() {
 }
 
 void loop() {
-  
-  // Adjust snake movement speed here
-    //lastMoveTime = currentTime;
     readGyro();
     updateDirection();
-    //moveSnake();
     delay(250);
   if(Serial.read() == 'E' && Serial.available() == 0) {
     // flip LED
@@ -88,33 +82,4 @@ void updateDirection() {
     Serial.println("");
   }
   
-}
-
-
-void moveSnake() {
-  
-  //Debug print statements
-  /*Serial.print("Snake Moving X = ");
-  //Serial.print(GyX);
-  Serial.print(directionX);
-  Serial.print(", Y = ");
-  //Serial.println(GyY);
-  Serial.println(directionY);*/
-
-  /*if(directionY == -1){
-    Serial.println("S");
-  }
-  else if(directionY == 1){
-    Serial.println("W");
-  }
-  else if(directionX == -1){
-    Serial.println("D");
-  }
-  else if(directionX == 1){
-    Serial.println("A");
-  }
-  else{
-    Serial.println("");
-  }*/
-
 }
