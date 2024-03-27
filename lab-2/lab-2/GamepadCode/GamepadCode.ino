@@ -60,7 +60,6 @@ void loop() {
     }
   }
   if(Serial.read() == 'E' && Serial.available() == 0) {
-    // flip LED
     digitalWrite(buzzer_pin, HIGH);
     delay(35);
   }
