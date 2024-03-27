@@ -1,4 +1,4 @@
-# LAB 1
+# LAB 2
 
 Due Date: March 24 11:59pm
 
