@@ -91,15 +91,11 @@ void loop() {
     dir[2]='A';
   }
 
-
-  //lcd.print(":");
-  //lcd.print(RTCdata.second(), DEC);
 }
 
 ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
 //generates pulse wave of frequency 1Hz/2 = 0.5kHz (takes two cycles for full wave- toggle high then toggle low)
-  //Serial.print("interrupt accessed\n");
-    //lcd.clear();
+  sei();
   lcd.setCursor(0,0);
   lcd.print(speed);
   lcd.print(dir[0]);
@@ -126,4 +122,5 @@ ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
     lcd.print(RTCdata.second());
   }
   else{lcd.print(RTCdata.second()); }
+  cli();
 }
