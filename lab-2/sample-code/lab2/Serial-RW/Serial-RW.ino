@@ -7,7 +7,7 @@
   yluo
   
 */
-
+#define buzzer_pin 12
 // LED status
 int led_status = HIGH;
 int incomingByte = 0;
@@ -18,6 +18,7 @@ void setup() {
   Serial.begin(9600);
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(buzzer_pin, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   led_status = HIGH;
 }
@@ -34,6 +35,9 @@ void loop() {
       // flip LED
       led_status = (led_status == HIGH)? LOW : HIGH;
       digitalWrite(LED_BUILTIN, led_status);
+      digitalWrite(buzzer_pin, HIGH);
+      delay(100);
+      digitalWrite(buzzer_pin, LOW);
     }
   }
 
