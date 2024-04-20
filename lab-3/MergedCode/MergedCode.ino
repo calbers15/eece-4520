@@ -1,8 +1,9 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 #include <RTClib.h>
-#include "arduinoFFT.h"
+#include "arduinoFFT.h"//ver 1.6.2
 
+//lcd pins
 #define rs 25
 #define en 23
 #define d0 36
@@ -13,24 +14,24 @@
 #define d5 26
 #define d6 24
 #define d7 22
-
+//motor pins
 #define MotorPin1 10
 #define MotorPin2 11
+//microphone pins
+#define sensorAnalogPin A0
+#define sensorDigitalPin 2
 
+//setup for motor and lcd and RTC
 RTC_DS1307 clock;
-
-//Microphone Pins
-int sensorAnalogPin = A0;
-int sensorDigitalPin = 2;
-int analogValue = 0;
-int digitalValue;
 
 //             0   1   2  3  4   5   6
 int PWMs[] = {255,192,128,0,128,192,255};
+int motorIndex=3; //start at 0 rpm
 volatile char dir[] = "N/A";
 int speed;
 LiquidCrystal lcd(rs,en,d0,d1,d2,d3,d4,d5,d6,d7);
 
+//setup microphone and FFT
 //Arduino FFT Library Globals and Constants **IMPORTANT: MUST USE arduinoFFT 1.6.2**
 double peakFreq = 0;
 int freqs{};
@@ -72,11 +73,7 @@ void setup() {
   lcd.begin(16, 2);
   lcd.print("");
 
-  //delay(100);
-  //sei();//stop interrupts
-
   
-  Serial.print("interrupt setup\n");
   pinMode(MotorPin1, OUTPUT);
   pinMode(MotorPin2, OUTPUT);
   pinMode(sensorDigitalPin, INPUT);
@@ -100,18 +97,22 @@ void loop() {
   Serial.print("Main frequency: ");
   peakFreq = FFT.MajorPeak(vReal, samples, samplingFreq);
   Serial.println(peakFreq);
-  
-  
-  
-  int motorIndex=5;
+
+  //
   signed int stepDir=0;//stepDir is the direction of the step being taken,
-               //eg. -1 for down, 0 for stationary, 1 for up. For debug =0
+                       //eg. -1 for down, 0 for stationary, 1 for up. For debug =0
+  
+  //convert peak freq to step direction, which is used in the rest of the code
+  if(peakFreq < (c4*(1+perError)) && peakFreq > (c4*(1-perError)))      {stepDir=1;}//C4 within 2%
+  else if(peakFreq < (a4*(1+perError)) && peakFreq > (a4*(1-perError))) {stepDir=-1;}//A4 within 2%
+
   
   if(motorIndex+stepDir > -1 && motorIndex+stepDir < 7){
     motorIndex=motorIndex+stepDir;
   }
+  else{ stepDir = 0;  }//if stepDir+motorIndex falls outside bounds -> set stepDir to 0
   speed = PWMs[motorIndex];
-    if(motorIndex < 3){
+  if(motorIndex < 3){
     analogWrite(MotorPin2, speed);
     analogWrite(MotorPin1, 0);
     dir[0]='C';
