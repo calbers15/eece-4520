@@ -12,9 +12,10 @@ import serial
 # serial port dev file name
 # need to change based on the particular host machine
 serialDevFile = 'COM3'
-ser=serial.Serial(serialDevFile, 9600, timeout=1)
+ser=serial.Serial('COM3', 9600, timeout=1)
 
 while True:
     line = ser.readline()
-    print(line)
-    ser.write(b'E')
+    decodeLine = line.decode('utf-8')
+    print(decodeLine)
+    #ser.write(b'E')

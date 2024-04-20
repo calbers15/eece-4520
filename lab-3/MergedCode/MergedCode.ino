@@ -1,6 +1,7 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 #include <RTClib.h>
+#include "arduinoFFT.h"
 
 #define rs 25
 #define en 23
@@ -18,11 +19,32 @@
 
 RTC_DS1307 clock;
 
+//Microphone Pins
+int sensorAnalogPin = A0;
+int sensorDigitalPin = 2;
+int analogValue = 0;
+int digitalValue;
+
 //             0   1   2  3  4   5   6
 int PWMs[] = {255,192,128,0,128,192,255};
 volatile char dir[] = "N/A";
 int speed;
 LiquidCrystal lcd(rs,en,d0,d1,d2,d3,d4,d5,d6,d7);
+
+//Arduino FFT Library Globals and Constants **IMPORTANT: MUST USE arduinoFFT 1.6.2**
+double peakFreq = 0;
+int freqs{};
+int numSamples = 0;
+unsigned long ms = 0;
+const uint16_t samples = 128;
+double vReal[samples];
+double vImag[samples];
+const double samplingFreq = 1600;
+unsigned int time_constant = round(1000000/samplingFreq);
+arduinoFFT FFT = arduinoFFT();
+double a4 = 440;
+double c4 = 262;
+double perError = 0.02;
 
 
 void setup() {
@@ -57,10 +79,30 @@ void setup() {
   Serial.print("interrupt setup\n");
   pinMode(MotorPin1, OUTPUT);
   pinMode(MotorPin2, OUTPUT);
+  pinMode(sensorDigitalPin, INPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  ms = micros();
+  for(int i = 0; i < samples; i++){
+    vReal[i] = (double)analogRead(sensorAnalogPin);
+    vImag[i] = 0;
+    while(micros() < ms + time_constant){
+
+    }
+    ms += time_constant;
+  }
+
+  FFT.Windowing(vReal, samples, FFTWindow::Hamming, FFTDirection::Forward);
+  FFT.Compute(vReal, vImag, samples, FFTDirection::Forward);
+  FFT.ComplexToMagnitude(vReal, vImag, samples);
+  Serial.print("Main frequency: ");
+  peakFreq = FFT.MajorPeak(vReal, samples, samplingFreq);
+  Serial.println(peakFreq);
+  
+  
+  
   int motorIndex=5;
   signed int stepDir=0;//stepDir is the direction of the step being taken,
                //eg. -1 for down, 0 for stationary, 1 for up. For debug =0
