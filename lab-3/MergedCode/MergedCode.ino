@@ -105,6 +105,7 @@ void loop() {
   //convert peak freq to step direction, which is used in the rest of the code
   if(peakFreq < (c4*(1+perError)) && peakFreq > (c4*(1-perError)))      {stepDir=1;}//C4 within 2%
   else if(peakFreq < (a4*(1+perError)) && peakFreq > (a4*(1-perError))) {stepDir=-1;}//A4 within 2%
+  //motorIndex=2;
 
   
   if(motorIndex+stepDir > -1 && motorIndex+stepDir < 7){
